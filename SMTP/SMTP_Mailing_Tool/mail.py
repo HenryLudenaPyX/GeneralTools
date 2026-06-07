@@ -28,19 +28,23 @@ try:
 except smtplib.SMTPAuthenticationError:
     print("Authentication failed")
 
+# Send basic information from the sender
 msg = MIMEMultipart()
 msg['From'] = 'USER_NAME'
 msg['To'] = receiver
 msg['subject'] = 'Subject of the email'
 
+# Get information from the file, this text is the body of the email
 with open('messageMail.txt', 'r') as f:
     message = f.read()
 
 #Load message
 msg.attach(MIMEText(message), 'plain') #(text, Type: plain text)
 
+# Name of the file
 filename = 'image.png'
 
+# Represent MIME content
 p = MIMEBase('application', 'octet-stream')
 
 # When attachment finishes, it closes
@@ -50,11 +54,17 @@ with open(filename, 'rb') as attachment: # rb = read in byte mode (to open it as
 # Code image as base64
 encoders.encode_base64(p)
 
+# Content-disposition: It tells the customer how to behave with that part
+# Attachment: This is a file
 p.add_header('Content-Disposition', f'attachment; filename={filename}')
 
+# Add header to the attachment
 msg.attach(p)
 
+# Transform MIME structure to SMTP text
 text = msg.as_string()
+
+# Send text to SMTP server
 server.sendmail(sender, receiver, text)
 
 # Close SMTP connection
